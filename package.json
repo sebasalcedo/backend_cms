@@ -4,7 +4,8 @@
   "description": "api cms",
   "main": "index.js",
   "scripts": {
-    "start:dev": "nodemon index.js"
+    "start:dev": "nodemon index.js",
+    "start": "node index.js"
   },
   "author": "Sebastian Salcedo",
   "license": "ISC",
