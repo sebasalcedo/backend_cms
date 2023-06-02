@@ -1,8 +1,6 @@
 const cors = require('cors');
 const path = require('path');
 const express = require('express');
-const fileUpload = require('express-fileupload');
-
 const { dbConnection } = require('./database/Connection');
 
 require('dotenv').config();
@@ -10,18 +8,22 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(fileUpload());
+
 // configuracion de CORS
 
 app.use(cors());
 
+// Carpeta PUBLIC
+
+app.use(express.static('public'));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Carpeta PUBLIC
 
-app.use(express.static('public'));
 
 // Lectura y parseo del body
 
@@ -31,6 +33,9 @@ app.use(express.json());
 // Base de datos
 
 dbConnection();
+
+
+
 
 // Rutas
 

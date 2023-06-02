@@ -1,9 +1,14 @@
 const { Schema, model } = require('mongoose');
 
 const mediaSchema = Schema({
+  name : {
+    type:String,
+    retquired: true
+  },
+
   type: {
     type: String,
-    enum: ['image', 'video', 'pdf'],
+    enum: ['image', 'video', 'audio', 'application'], // Agrega 'application' a la enumeración
     required: true
   },
   fileUrl: {

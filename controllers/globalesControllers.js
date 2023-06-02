@@ -1,97 +1,86 @@
 const { response } = require('express');
-
-const Media = require('../models/medias');
 const path = require('path');
+const fs = require('fs');
+const Media = require('../models/medias');
+const getDestinationFolder = require('../helpers/getDestinationFolder');
 
+const uploadMedia = function (req, res = response) {
+  
+  const { originalname, mimetype, path: filePath } = req.file;
+  const fileExtension = path.extname(originalname);
+  const fileType = mimetype.split('/')[0];
+  const destinationFolder = getDestinationFolder(fileType);
+  const newFilePath = path.join(
+    destinationFolder,
+    `${Date.now()}${fileExtension}`
+  );
 
-// Función para guardar un nuevo medio en la base de datos
-const createMedia = async (req, res = response) => {
-  try {
-    const { type } = req.body;
-    const file = req.files.file;
-
-    // Analizar el tipo de archivo
-    let fileType;
-    const mimeType = file.mimetype;
-
-    if (mimeType.startsWith('image')) {
-      fileType = 'image';
-    } else if (mimeType.startsWith('video')) {
-      fileType = 'video';
-    } else if (mimeType === 'application/pdf') {
-      fileType = 'pdf';
-    } else {
-      res.status(400).json({ error: 'Invalid file type' });
-      return;
+  fs.rename(filePath, newFilePath, function (err) {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({
+        ok: false,
+        msg: 'Se ha presentado un error al guardar el file',
+      });
     }
 
-    // Mueve el archivo a una ubicación deseada
-    const fileName = file.name;
-    const uploadPath = path.join(__dirname, '..', 'uploads', fileName);
-    await file.mv(uploadPath);
-
-    // Generar la URL del recurso
-    const baseUrl = 'http://localhost:3000'; // Reemplaza con la URL base de tu aplicación
-    const fileUrl = `/uploads/${fileName}`;
-
-    const media = new Media({
+    const newMedia = new Media({
+      name: originalname,
       type: fileType,
-      fileUrl: fileUrl
+      fileUrl: newFilePath,
     });
 
-    await media.save();
-
-    const mediaWithUrl = {
-      ...media._doc,
-       fileUrl
-    };
-
-    res.status(201).json({ message: 'File saved successfully', media: mediaWithUrl });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'An error occurred' });
-  }
-};
-
-const getFile = async (req, res) => {
-  try {
-    const mediaId = req.params.id;
-
-    // Buscar el archivo en la base de datos
-    const media = await Media.findById(mediaId);
-    if (!media) {
-      res.status(404).json({ error: 'File not found' });
-      return;
-    }
-
-    // Obtener la ruta del archivo
-    const filePath = path.join(__dirname, '..', media.fileUrl);
-
-    // Mostrar el archivo en el navegador
-    res.sendFile(filePath);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'An error occurred' });
-  }
-};
-
-
-
-const getListFile = async ( req, res = reponse) => {
-
-  const [media, total] = await Promise.all([
-    Media.find({}, 'type fileUrl  created_at updated_at'),
-    Media.countDocuments(),
-  ]);
-
-  res.json({
-    ok: true,
-    media,
-    total,
+    newMedia
+      .save()
+      .then(() => {
+        return res.status(200).json({
+          ok: true,
+          msg: 'Se ha realizado la carga con Exito',
+          newMedia
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        return res.status(500).json({
+          ok: false,
+          msg: 'Error al guardar el archivo en la base de datos.',
+        });
+      });
   });
-}
+};
 
+const getUploads = async function (req, res = response, next) {
+  try {
+    const uploads = await Media.find();
+    const images = [];
+    const videos = [];
+    const otros = [];
 
+    uploads.forEach((upload) => {
 
-
-module.exports = { createMedia, getFile, getListFile };
+      switch (upload.type) {
+        case 'image':
+          images.push(upload);
+          break;
+        case 'videos':
+          videos.push(upload);
+          break;
+       
+        case 'application':
+          otros.push(upload);
+          break;
+      }
+    });
+    return res.status(200).json({
+      ok: true,
+      images, videos, otros
+    });
+   
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .send('Error al obtener los uploads de la base de datos.');
+  }
+};
+module.exports = { uploadMedia, getUploads };

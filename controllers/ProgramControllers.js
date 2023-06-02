@@ -194,6 +194,10 @@ const deleteProgram = async (req, res = response) => {
       });
     }
 
+
+    // TODO: AL ELIMINAR EL PROGRAMA SE MIGRAN TODO AL QUE SE ENVIA RECORDAR
+    // * Se puede mostrar toda la información que se va a mirgrar al nuevo programa.
+    
     const ProgramsGroup = await Programs.findByIdAndDelete(_id);
 
     return res.status(200).json({

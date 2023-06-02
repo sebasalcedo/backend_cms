@@ -11,6 +11,14 @@ const LinesSchema = Schema(
       type: String,
       required: false,
     },
+    groups:[
+      {
+        required: false,
+        type: Schema.Types.ObjectId,
+        ref: 'Groups',
+      }
+    ],
+    
     description: {
       type: String,
       required: false,

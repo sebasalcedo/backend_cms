@@ -11,7 +11,10 @@ const StepsSchema = Schema(
       type: String,
       required: true,
     },
-
+    question: {
+      type: String,
+      required: false
+    },
     description: {
       type: String,
       required: false,

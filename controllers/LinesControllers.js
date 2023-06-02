@@ -27,11 +27,11 @@ const getLineById = async (req, res = response) => {
 };
 
 const getLines = async (req, res = response) => {
-  const desde = Number(req.query.desde) || 0;
+  
 
   const [lines, total] = await Promise.all([
     Lines.find({}, 'name indicative description created_at updated_at')
-      .skip(desde),
+    .sort({ created_at: 1 }),,
     Lines.countDocuments(),
   ]);
 

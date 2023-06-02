@@ -2,6 +2,7 @@ const { response } = require('express');
 
 const Steps = require('../models/Steps');
 const Programs = require('../models/programs');
+const Media = require('../models/medias');
 
 const getStepsByProgram = async (req, res = response) => {
   try {
@@ -9,13 +10,19 @@ const getStepsByProgram = async (req, res = response) => {
 
     const program = await Programs.findById(idProgram, 'Steps').populate('Steps');
 
-    const steps = program.Steps.map((step) => ({
-      _id: step._id,
-      numberStep: parseInt(step.numberStep),
-      interaction: step.interaction,
-      description: step.description,
-      media: step.media
+    const steps = await Promise.all(program.Steps.map(async (step) => {
+      const media = await Media.findById(step.media);
+      return {
+        _id: step._id,
+        numberStep: parseInt(step.numberStep),
+        interaction: step.interaction,
+        question: step.question,
+
+        description: step.description,
+        media: media
+      };
     }));
+
 
     steps.sort((a, b) => a.numberStep - b.numberStep);
 
@@ -31,9 +38,12 @@ const getStepsByProgram = async (req, res = response) => {
     });
   }
 };
+
+
+
 const getListSteps = async (req, res = response) => {
   const [steps, total] = await Promise.all([
-    await Steps.find({}, 'numberStep Interaction Description Media'),
+    await Steps.find({}, 'numberStep  Interaction question Description Media'),
     Steps.countDocuments(),
   ]);
   res.json({
@@ -55,6 +65,7 @@ const registerSteps = async (req, res = response) => {
       for (const element of steps) {
         const jsonData = {
           numberStep: element.numberStep,
+          question:element.question,
           interaction: element.interaction,
           description: element.description,
           media: element.media,

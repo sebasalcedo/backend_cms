@@ -1,6 +1,7 @@
 const { response } = require('express');
 
 const Groups = require('../models/Group');
+const Lines = require('../models/Lines');
 
 const getGruopsById = async (req, res = response) => {
   const idLine = req.params.id;
@@ -23,16 +24,14 @@ const getGruopsById = async (req, res = response) => {
 };
 
 const getGroups = async (req, res = response) => {
-  const desde = Number(req.query.desde) || 0;
 
   const [groups, total] = await Promise.all([
     await Groups.find(
       {},
-      'name indicative line description programs user created_at updated_at'
+      'name indicative description programs user created_at updated_at'
     )
-      .skip(desde)
-      .limit(5),
-    Groups.countDocuments(),
+      .skip(desde),
+     Groups.countDocuments(),
   ]);
   res.json({
     ok: true,
@@ -42,20 +41,25 @@ const getGroups = async (req, res = response) => {
 };
 
 const registerGroups = async (req, res = response) => {
-  const { name } = req.body;
+  const { idLines, name } = req.body;
 
   try {
     const existName = await Groups.findOne({ name });
+ 
     if (existName) {
       return res.status(400).json({
         ok: false,
-        msg: ' Ya existe un grupo con ese nombre',
+        msg: 'Ya existe un grupo con ese nombre',
       });
     }
 
     const group = new Groups(req.body);
-
     await group.save();
+    const groupId = group._id;
+
+    const line = await Lines.findById(idLines);
+    line.groups.push(groupId);
+    await line.save();
 
     res.json({
       ok: true,
@@ -67,7 +71,7 @@ const registerGroups = async (req, res = response) => {
 
     res.status(500).json({
       ok: false,
-      msg: 'Unexpected error... check logs',
+      msg: 'Error inesperado... revisa los logs',
     });
   }
 };
@@ -114,7 +118,6 @@ const updateGroup = async (req, res = response) => {
 const deleteGroups = async (req, res = response) => {
   const _id  = req.params.id;
   const grupo = req.params.grupo;
-  console.log(req.params);
 
   try {
     const GroupsDB = await Groups.findById(_id);
@@ -130,7 +133,6 @@ const deleteGroups = async (req, res = response) => {
 
 
     const existingGroup = await Groups.findById(grupo);
-    console.log(existingGroup);
     if (existingGroup) {
       
       for (const program of GroupsDB.programs) {
@@ -164,22 +166,30 @@ const deleteGroups = async (req, res = response) => {
 };
 
 const filterGroupsLines = async (req, res = response) => {
-  const idLine = req.params.id;
+  const  idLines  = req.params.id;
 
   try {
-    return Groups.find({ line: idLine })
-      .exec()
-      .then((data) => {
-        return res.status(200).json({
-          ok: true,
-          group: data,
-        });
-      })
-      .catch((error) => {
-        console.error('No se encontrado registro alguno:', error);
+    const line = await Lines.findById(idLines);
+    if (!line) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'No se encontró la línea',
       });
+    }
+
+    const groupIds = line.groups;
+    const groups = await Groups.find({ _id: { $in: groupIds } });
+    res.json({
+      ok: true,
+      data: groups,
+    });
   } catch (error) {
-    console.log(error);
+    console.log('ERROR al obtener los grupos:', error);
+
+    res.status(500).json({
+      ok: false,
+      msg: 'Error inesperado... revisa los logs',
+    });
   }
 };
 

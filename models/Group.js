@@ -11,11 +11,7 @@ const GroupsSchema = Schema(
       type: String,
       required: false,
     },
-    line: {
-      required: true,
-      type: Schema.Types.ObjectId,
-      ref: 'Lines',
-    },
+
     programs: [
       {
         program: {

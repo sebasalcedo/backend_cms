@@ -30,7 +30,7 @@ router.post(
   [
     validateJWT,
     check('name', 'name is required').not().isEmpty(),
-    check('line', 'line is required').not().isEmpty(),
+    check('idLines', 'line is required').not().isEmpty(),
     check('user', 'user is required').not().isEmpty(),
     validateFields,
   ],
@@ -42,7 +42,7 @@ router.put(
   [
     validateJWT,
     check('name', 'name is required').not().isEmpty(),
-    check('line', 'line is required').not().isEmpty(),
+    check('idLines', 'line is required').not().isEmpty(),
     check('user', 'user is required').not().isEmpty(),
     validateFields,
   ],
