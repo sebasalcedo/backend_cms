@@ -10,7 +10,7 @@ const { validateFields } = require('../middlewares/validateFields');
 const { validateJWT } = require('../middlewares/validateToken');
 
 
-const {getStepsByProgram, getListSteps, registerSteps, updateSteps, deleteStep} = require('../controllers/StepsControllers')
+const {getStepsByProgram, getListSteps, registerSteps, updateSteps, deleteStep, updatePositionSteps} = require('../controllers/StepsControllers')
 
 
 const router = Router();
@@ -38,7 +38,10 @@ router.put('/:id', [
         ], updateSteps);
     
 
-router.delete('/:id',[validateJWT], deleteStep)
+router.delete('/:id',[validateJWT], deleteStep);
 
+
+
+router.post('/updatePosition',[validateJWT], updatePositionSteps)
 
 module.exports = router;

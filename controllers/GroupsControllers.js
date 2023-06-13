@@ -147,13 +147,13 @@ const deleteGroups = async (req, res = response) => {
 
      
     }
-
-    // const deleteGroup = await Groups.findByIdAndDelete(_id);
+    // TODO: queda pendiente al eliminart actualizar los datos
+    const deleteGroup = await Groups.findByIdAndDelete(_id);
 
     return res.status(200).json({
       ok: true,
       msg: 'Se ha eliminado el grupo',
-      // data: deleteGroup,
+      data: deleteGroup,
     });
   } catch (error) {
     console.log('Error en el eliminar el grupo', error);
