@@ -3,6 +3,30 @@ const { response } = require('express');
 const subCategoria = require('../models/subCategoryPrograms');
 
 
+
+const getSubCategoriaById = async(req, res  = response ) => {
+
+  const idSubCategoria = req.params.id;
+
+  try {
+      return subCategoria.find({ _id: idSubCategoria })
+      .exec()
+      .then((data) => {
+          return res.status(200).json({
+          ok: true,
+          data,
+          });
+      })
+      .catch((error) => {
+          console.error('No se encontrado registro alguno:', error);
+      });
+  } catch (error) {
+      console.log(error);
+  }
+
+
+}
+
 const getSubCategory = async (req, res = response) => {
 
     const [subCategory, total] = await Promise.all([
@@ -52,7 +76,7 @@ const registerSubCategory = async (req, res = response) => {
 
 
 
-  const updateLines = async (req, res = response) => {
+  const updateSubCategory = async (req, res = response) => {
 
     try {
       const _id = req.params.id;
@@ -67,7 +91,7 @@ const registerSubCategory = async (req, res = response) => {
   
       const { name,  ...campos } = req.body;
   
-      const existName = await Lines.findOne({ name });
+      const existName = await subCategoria.findOne({ name });
       
      
   
@@ -97,7 +121,7 @@ const registerSubCategory = async (req, res = response) => {
     }
   };
   
-  const deleteLines = async (req, res = response) => {
+  const deleteSubCategory = async (req, res = response) => {
     const _id = req.params.id;
   
     try {
@@ -130,6 +154,7 @@ const registerSubCategory = async (req, res = response) => {
 module.exports={
     getSubCategory,
     registerSubCategory,
-    updateLines,
-    deleteLines
+    updateSubCategory,
+    deleteSubCategory,
+    getSubCategoriaById
 }

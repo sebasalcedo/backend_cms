@@ -7,23 +7,26 @@ const Media = require('../models/medias');
 const getStepsByProgram = async (req, res = response) => {
   try {
     const idProgram = req.params.id;
-
     const program = await Programs.findById(idProgram, 'Steps').populate('Steps');
-
     const steps = await Promise.all(program.Steps.map(async (step) => {
+
+  
       const media = await Media.findById(step.media);
+
+
+
+
       return {
         _id: step._id,
         numberStep: parseInt(step.numberStep),
         interaction: step.interaction,
         question: step.question,
-
         description: step.description,
         media: media
       };
     }));
 
-
+    console.log('steps',steps);
     steps.sort((a, b) => a.numberStep - b.numberStep);
 
     return res.status(200).json({
@@ -77,23 +80,28 @@ const registerSteps = async (req, res = response) => {
         });
 
         if (existingStep) {
+          
+
           // El número de paso ya existe, agregar mensaje de error
           const errorMessage = `El paso con numberStep ${element.numberStep} ya existe`;
-          failureSteps.push({ ...jsonData, error: errorMessage });
-        } else{
-            // El numberStep no existe, guardar el nuevo paso
-            const newStep = new Steps(jsonData);
-            await newStep.save();
-            successIds.push(newStep._id);
 
-            // Agregar el ID del paso al arreglo de Steps del programa correspondiente
-            const programa = await Programs.findById(idProgram);
-            programa.Steps.push(newStep._id);
-            await programa.save();
-          }
+          console.log('errorMessage', errorMessage);
+
+          failureSteps.push({ ...jsonData, error: errorMessage });
+        } else {
+         
+          const newStep = new Steps(jsonData);
+          await newStep.save();
+          successIds.push(newStep._id);
+
+         
+          const programa = await Programs.findById(idProgram);
+          programa.Steps.push(newStep._id);
+          await programa.save();
         }
-      
-     catch (error) {
+      } catch (error) {
+        console.log('error', error);
+
         // Se produjo un error al guardar el paso
         return res.status(500).json({
           ok: false,
@@ -196,24 +204,16 @@ const deleteStep = async ( req, res = response) =>{
 
 const updatePositionSteps = async (req, res = response) => {
   const campos = req.body;
-  console.log(campos);
 
   try {
-    for (const element of campos) {
-      const stepsDB = await Steps.findById(element.id);
-
-      if (!stepsDB) {
-
-        return res.status(404).json({
-          ok: false,
-          msg:`Step with ID ${element.id} not found` ,
-        });
-       
+    const updateOperations = campos.map((element) => ({
+      updateOne: {
+        filter: { _id: element.id },
+        update: { $set: { numberStep: element.numberStep } }
       }
+    }));
 
-      stepsDB.numberStep = element.numberStep;
-      await stepsDB.save();
-    }
+    await Steps.bulkWrite(updateOperations);
 
     return res.status(200).json({
       ok: true,
@@ -224,11 +224,12 @@ const updatePositionSteps = async (req, res = response) => {
     console.log(error);
 
     return res.status(500).json({
-      ok: true,
-      msg: "An error occurred while updating step positions" ,
+      ok: false,
+      msg: "An error occurred while updating step positions",
     });
   }
 }
+
 
 
 module.exports = {

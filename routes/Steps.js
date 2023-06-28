@@ -32,7 +32,7 @@ router.put('/:id', [
         check('numberStep', 'numberStep is required').not().isEmpty(),
         check('interaction', 'interaction is required').not().isEmpty(),
         check('description', 'description is required').not().isEmpty(),
-        check('media', 'media is required').not().isEmpty(),
+        
         validateFields
         
         ], updateSteps);

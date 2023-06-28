@@ -2,9 +2,6 @@ const { response } = require('express');
 
 const Lines = require('../models/Lines');
 
-
-
-
 const getLineById = async (req, res = response) => {
   const idLine = req.params.id;
 

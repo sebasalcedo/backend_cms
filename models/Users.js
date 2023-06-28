@@ -25,11 +25,17 @@ const UserSchema = Schema(
     },
     img: {
       type: String,
+      required: false,
     },
-    rol: {
+    isActivated : {
+      type: Number,
+      required:true,
+      default:1
+    },
+    role: {
       type: String,
       required: true,
-      default: 'Content',
+      default: 'CONTENIDO',
     },
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } },

@@ -3,10 +3,34 @@ const bcrypt = require('bcryptjs');
 const Users = require('../models/Users');
 const { generarJWT } = require('../helpers/jwt');
 
+
+const getUserById = async(req, res  = response ) => {
+
+  const idUser = req.params.id;
+
+  try {
+      return Users.find({ _id: idUser },'name last_name isActivated phone email rol img')
+      .exec()
+      .then((data) => {
+          return res.status(200).json({
+          ok: true,
+          data,
+          });
+      })
+      .catch((error) => {
+          console.error('No se encontrado registro alguno:', error);
+      });
+  } catch (error) {
+      console.log(error);
+  }
+
+
+}
+
 const getUsers = async (req, res) => {
  
   const [users, total] = await Promise.all([
-    Users.find({}, 'name last_name phone email rol img'),
+    Users.find({}, 'name last_name phone email isActivated rol img'),
 
     Users.countDocuments(),
   ]);
@@ -19,6 +43,7 @@ const getUsers = async (req, res) => {
 };
 
 const registerUser = async (req, res = response) => {
+  
   const { email, password } = req.body;
 
   try {
@@ -38,14 +63,15 @@ const registerUser = async (req, res = response) => {
 
     await user.save();
     
-    
     const token = await generarJWT(user._id);
 
     res.json({
       ok: true,
       data: user,
       token,
+
     });
+
   } catch (error) {
     console.log('ERROR al crear el usuario:', error);
 
@@ -63,7 +89,6 @@ const updateUser = async (req, res = response) => {
     const userDB = await Users.findById({ _id });
 
     if (!userDB) {
-      console.log('No record found with that id function updateUser');
 
       return res.status(404).json({
         ok: false,
@@ -71,16 +96,6 @@ const updateUser = async (req, res = response) => {
       });
     }
 
-
-       // TODO: Validar token y comprobrar si es el usuario correcto
-
-      //  const requestingUserId = req.user.id;
-      //  if (requestingUserId !== userId) {
-      //    return res.status(401).json({
-      //      ok: false, 
-      //      msg: 'Unauthorized - You are not allowed to update this user',
-      //    });
-      //  }
 
     const { password, email, ...campos } = req.body;
 
@@ -128,7 +143,6 @@ const deleteUser = async (req, res = response) => {
     }
 
     const deleteUser = await Users.findByIdAndDelete(_id);
-
     return res.status(200).json({
       ok: true,
       msg: 'User Deleted',
@@ -143,10 +157,42 @@ const deleteUser = async (req, res = response) => {
     });
   }
 };
+const ActivateAndInactivate = async (req, res = response) => {
+  const _id = req.params.id;
+
+  try {
+    const userDB = await Users.findById(_id);
+
+    if (!userDB) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'No record found with that id in ActivateAndInactivate function',
+      });
+    }
+
+    // Cambiar el estado de activación
+    userDB.isActivated = userDB.isActivated === 1 ? 0 : 1;
+    await userDB.save();
+
+    return res.json({
+      ok: true,
+      msg: 'Activation status updated successfully',
+      user: userDB,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      ok: false,
+      msg: 'Internal server error',
+    });
+  }
+};
 
 module.exports = {
-    getUsers,
+  getUsers,
   registerUser,
   updateUser,
   deleteUser,
+  getUserById,
+  ActivateAndInactivate
 };

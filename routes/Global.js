@@ -1,38 +1,52 @@
-/*
- * path: '/api/v1.0/globales/'
- */
-
-
 const { Router } = require('express');
-const { check } = require('express-validator');
-
-
 const multer = require('multer');
 
-const { validateFields } = require('../middlewares/validateFields');
-const { validateJWT } = require('../middlewares/validateToken');
-const { uploadMedia, getUploads} = require('../controllers/globalesControllers');
-const  getDestinationFolder  = require('../helpers/getDestinationFolder')
+
+const { getUploads, uploadMedia, guardarLink } = require('../controllers/globalesControllers');
+
 const router = Router();
+
+
+
+function obtenerFechaActual() {
+    const fecha = new Date();
+    const dia = fecha.getDate();
+    const mes = obtenerNombreMes(fecha.getMonth());
+    const año = fecha.getFullYear();
+    
+    return `${dia}-${mes}-${año}`;
+  }
+  
+  // Función para obtener el nombre del mes en formato de tres letras (por ejemplo, 'Jan' para enero)
+  function obtenerNombreMes(numeroMes) {
+    const meses = [
+      'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+    ];
+    return meses[numeroMes];
+  }
+
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      const fileType = file.mimetype.split('/')[0];
-      const destinationFolder = getDestinationFolder(fileType);
-      cb(null, destinationFolder);
+    cb(null, 'uploads'); 
     },
     filename: function (req, file, cb) {
-      cb(null, `${Date.now()}-${file.originalname}`);
+    let tipo= '';
+
+    const fechaActual = obtenerFechaActual();
+    tipo = file.originalname.slice(-3);
+        cb(null, `archivo-${fechaActual}-${req.body.name+'.'+tipo}`); 
     }
-  });
-  
-  const upload = multer({ storage: storage });
+});
 
+const upload = multer({ storage: storage });
 
-// Ruta para crear un nuevo medio
 router.post('/upload', upload.single('file'), uploadMedia);
-router.get('/upload', getUploads);
 
 
+router.post('/upload/video', guardarLink)
 
+// Ruta para obtener los medios subidos
+router.get('/uploads', getUploads);
 
 module.exports = router;

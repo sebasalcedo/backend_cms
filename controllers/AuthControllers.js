@@ -9,7 +9,18 @@ const login = async (req, res = response) => {
 
   try {
     const userDB = await Users.findOne({ email });
+
+    
+
     const id = userDB._id.toString();
+
+    if (userDB.isActivated !== 1) {
+      return res.status(500).json({
+        ok: false,
+        msg: 'Usuario inactivo',
+      });
+    }
+
 
     if (!id) {
       return res.status(404).json({

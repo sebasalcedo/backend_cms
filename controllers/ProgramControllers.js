@@ -1,7 +1,6 @@
 const { response } = require('express');
 const Programs = require('../models/programs');
 const Groups = require('../models/Group');
-const _ = require('lodash');
 
 const getProgramById = async (req, res = response) => {
   const idPrograms = req.params.id;

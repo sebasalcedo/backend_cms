@@ -13,11 +13,17 @@ const {
   updateUser,
   deleteUser,
   getUsers,
+  getUserById,
+  ActivateAndInactivate
 } = require('../controllers/UsersControllers');
 
 const router = Router();
 
 router.get('/', [validateJWT], getUsers);
+router.get('/estateUser/:id', [validateJWT], ActivateAndInactivate);
+
+router.get('/:id', [validateJWT], getUserById);
+
 
 router.post(
   '/',

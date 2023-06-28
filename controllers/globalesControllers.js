@@ -1,86 +1,109 @@
 const { response } = require('express');
-const path = require('path');
-const fs = require('fs');
 const Media = require('../models/medias');
-const getDestinationFolder = require('../helpers/getDestinationFolder');
+
+
+
+// Función para obtener la fecha actual y formatearla manualmente como "DD/MMM/YYYY"
+function obtenerFechaActual() {
+  const fecha = new Date();
+  const dia = fecha.getDate();
+  const mes = obtenerNombreMes(fecha.getMonth());
+  const año = fecha.getFullYear();
+  
+  return `${dia}-${mes}-${año}`;
+}
+
+// Función para obtener el nombre del mes en formato de tres letras (por ejemplo, 'Jan' para enero)
+function obtenerNombreMes(numeroMes) {
+  const meses = [
+    'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+  ];
+  return meses[numeroMes];
+}
 
 const uploadMedia = function (req, res = response) {
+  const fechaActual = obtenerFechaActual();
   
-  const { originalname, mimetype, path: filePath } = req.file;
-  const fileExtension = path.extname(originalname);
-  const fileType = mimetype.split('/')[0];
-  const destinationFolder = getDestinationFolder(fileType);
-  const newFilePath = path.join(
-    destinationFolder,
-    `${Date.now()}${fileExtension}`
-  );
+  tipo = req.file.originalname.slice(-3);
+  const nombreArchivo = `archivo-${fechaActual}-${req.body.name+'.'+tipo}`;
 
-  fs.rename(filePath, newFilePath, function (err) {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({
-        ok: false,
-        msg: 'Se ha presentado un error al guardar el file',
+  Media.findOne({ name: nombreArchivo })
+    .then(existingMedia => {
+      if (existingMedia) {
+        return res.status(400).json({ error: 'Ya existe un archivo con el mismo nombre' });
+      }
+      const media = new Media({
+        name: nombreArchivo,
+        type: tipo
       });
-    }
 
-    const newMedia = new Media({
-      name: originalname,
-      type: fileType,
-      fileUrl: newFilePath,
+      media.save()
+        .then(savedMedia => {
+          console.log('Archivo guardado en la base de datos:', savedMedia);
+          res.json(savedMedia); 
+        })
+        .catch(error => {
+          console.log('Error al guardar el archivo en la base de datos:', error);
+          res.status(500).json({ error: 'Error al guardar el archivo' });
+        });
+    })
+    .catch(error => {
+      console.log('Error al verificar el archivo en la base de datos:', error);
+      res.status(500).json({ error: 'Error al verificar el archivo' });
+    });
+};
+
+
+const guardarLink = function (req, res = response) {
+
+  const { name, fileUrl } = req.body;
+  const fechaActual = obtenerFechaActual();
+  
+  const nombreArchivo = `archivo-${fechaActual}-${name}`;
+
+  
+
+  Media.findOne({ name: nombreArchivo })
+    .then(existingMedia => {
+      if (existingMedia) {
+        return res.status(400).json({ error: 'Ya existe un archivo con el mismo nombre' });
+      }
+      const media = new Media({
+        name: nombreArchivo,
+        type: 'video',
+        fileUrl: fileUrl
+      });
+
+      media.save()
+        .then(savedMedia => {
+          console.log('Archivo guardado en la base de datos:', savedMedia);
+          res.json(savedMedia); 
+        })
+        .catch(error => {
+          console.log('Error al guardar el archivo en la base de datos:', error);
+          res.status(500).json({ error: 'Error al guardar el archivo' });
+        });
+    })
+    .catch(error => {
+      console.log('Error al verificar el archivo en la base de datos:', error);
+      res.status(500).json({ error: 'Error al verificar el archivo' });
     });
 
-    newMedia
-      .save()
-      .then(() => {
-        return res.status(200).json({
-          ok: true,
-          msg: 'Se ha realizado la carga con Exito',
-          newMedia
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-        return res.status(500).json({
-          ok: false,
-          msg: 'Error al guardar el archivo en la base de datos.',
-        });
-      });
+
+}
+
+
+const getUploads = async function (req, res = response) {
+  const [data, total] = await Promise.all([
+    Media.find({}, 'name type fileUrl created_at updated_at').sort({ created_at: 1 }),
+    Media.countDocuments(),
+  ]);
+
+  res.json({
+    ok: true,
+    data,
+    total,
   });
 };
 
-const getUploads = async function (req, res = response, next) {
-  try {
-    const uploads = await Media.find();
-    const images = [];
-    const videos = [];
-    const otros = [];
-
-    uploads.forEach((upload) => {
-
-      switch (upload.type) {
-        case 'image':
-          images.push(upload);
-          break;
-        case 'videos':
-          videos.push(upload);
-          break;
-       
-        case 'application':
-          otros.push(upload);
-          break;
-      }
-    });
-    return res.status(200).json({
-      ok: true,
-      images, videos, otros
-    });
-   
-  } catch (err) {
-    console.error(err);
-    return res
-      .status(500)
-      .send('Error al obtener los uploads de la base de datos.');
-  }
-};
-module.exports = { uploadMedia, getUploads };
+module.exports = { uploadMedia, getUploads, guardarLink };

@@ -10,12 +10,14 @@ const { validateJWT } = require('../middlewares/validateToken');
 
 const {
   getSubCategory,
-  deleteLines,
   registerSubCategory,
-  updateLines,
+  updateSubCategory,
+  deleteSubCategory,
+  getSubCategoriaById
 } = require('../controllers/subCategoryControllers');
 
 const router = Router();
+router.get('/:id', [validateJWT], getSubCategoriaById);
 
 router.get('/', [validateJWT], getSubCategory);
 
@@ -36,9 +38,9 @@ router.put(
     check('name', 'name is required').not().isEmpty(),
     validateFields,
   ],
-  updateLines
+  updateSubCategory
 );
 
-router.delete('/:id', [validateJWT], deleteLines);
+router.delete('/:id', [validateJWT], deleteSubCategory);
 
 module.exports = router;
