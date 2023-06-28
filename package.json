@@ -26,13 +26,8 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.38.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-config-node": "^2.0.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-node": "^1.0.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "nodemon": "^1.14.9",
-    "prettier": "^2.8.7"
+    
+    "nodemon": "^1.14.9"
+  
   }
 }
