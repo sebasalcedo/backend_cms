@@ -92,6 +92,28 @@ const guardarLink = function (req, res = response) {
 
 }
 
+const getMediaById = async (req,res = response) =>{
+  const idMedia = req.params.id;
+
+  
+  try {
+    return Media.find({ _id: idMedia })
+      .exec()
+      .then((data) => {
+        return res.status(200).json({
+          ok: true,
+          data,
+        });
+      })
+      .catch((error) => {
+        console.error('No se encontrado registro alguno:', error);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+  
+}
+
 
 const getUploads = async function (req, res = response) {
   const [data, total] = await Promise.all([
@@ -106,4 +128,4 @@ const getUploads = async function (req, res = response) {
   });
 };
 
-module.exports = { uploadMedia, getUploads, guardarLink };
+module.exports = { uploadMedia, getUploads, guardarLink,getMediaById };

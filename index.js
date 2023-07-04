@@ -11,7 +11,6 @@ require('dotenv').config();
 const app = express();
 
 // Usar el middleware helmet
- app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
 // Configuración de CORS
 app.use(cors());

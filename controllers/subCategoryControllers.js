@@ -1,6 +1,7 @@
 const { response } = require('express');
 
 const subCategoria = require('../models/subCategoryPrograms');
+const Programs = require('../models/programs');
 
 
 
@@ -130,7 +131,15 @@ const registerSubCategory = async (req, res = response) => {
       if (!subCategoriaDB) {
         return res.status(404).json({
           ok: false,
-          msg: 'No se encontro subCategoria con ese identificado',
+          msg: 'No se encontró la subcategoría con ese identificador',
+        });
+      }
+      const isUsedInPrograms = await Programs.exists({ Subcategory: subCategoriaDB.name });
+  
+      if (isUsedInPrograms) {
+        return res.status(500).json({
+          ok: false,
+          msg: 'No se puede eliminar la subcategoría porque está siendo utilizada en uno o más programas',
         });
       }
   
@@ -138,18 +147,21 @@ const registerSubCategory = async (req, res = response) => {
   
       return res.status(200).json({
         ok: true,
-        msg: 'Se ha eliminado la subCategoria',
+        msg: 'Se ha eliminado la subcategoría',
         data: subCategoriaDelete,
       });
     } catch (error) {
-      console.log('Error en el eliminar la subCategoria', error);
+      console.log('Error al eliminar la subcategoría', error);
   
       return res.status(500).json({
         ok: false,
-        msg: 'Error para eliminar la subCategoria',
+        msg: 'Error al eliminar la subcategoría',
       });
     }
   };
+  
+
+  
 
 module.exports={
     getSubCategory,

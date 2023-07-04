@@ -13,5 +13,6 @@ module.exports = {
       UPDATED: 'El registro se actualizó exitosamente.',
       DELETED: 'El registro se eliminó exitosamente.',
       // Agrega más mensajes de éxito según tus necesidades
+      
     },
   };
