@@ -23,6 +23,35 @@ const UserSchema = Schema(
       type: String,
       required: true,
     },
+    company:{
+      type: String,
+      required:false
+    },
+    job: {
+      type: String,
+      required:false
+    },
+    about: {
+      type: String,
+      required:false
+    },
+    twitter_profile:{
+      type: String,
+      required:false
+    },
+    facebook_profile:{
+      type: String,
+      required:false
+    },
+
+    instagram_profile:{
+      type: String,
+      required:false
+    },
+    linkedin_profile:{
+      type: String,
+      required:false
+    },
     img: {
       type: String,
       required: false,

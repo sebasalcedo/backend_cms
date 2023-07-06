@@ -9,7 +9,7 @@ const getUserById = async(req, res  = response ) => {
   const idUser = req.params.id;
 
   try {
-      return Users.find({ _id: idUser },'name last_name isActivated phone email rol img')
+      return Users.find({ _id: idUser },'name last_name phone email company job about twitter_profile facebook_profile instagram_profile linkedin_profile role img isActivated')
       .exec()
       .then((data) => {
           return res.status(200).json({
@@ -30,7 +30,7 @@ const getUserById = async(req, res  = response ) => {
 const getUsers = async (req, res) => {
  
   const [users, total] = await Promise.all([
-    Users.find({}, 'name last_name phone email isActivated rol img'),
+    Users.find({}, 'name last_name phone email isActivated role img'),
 
     Users.countDocuments(),
   ]);
