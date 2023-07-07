@@ -7,13 +7,17 @@ const { check } = require('express-validator');
 
 const { validateFields } = require('../middlewares/validateFields');
 const { validateJWT } = require('../middlewares/validateToken');
+<<<<<<< HEAD
 const multer = require('multer');
+=======
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 
 const {
   registerUser,
   updateUser,
   deleteUser,
   getUsers,
+<<<<<<< HEAD
   getUserById,
   ActivateAndInactivate,
   uploadFilePerfil
@@ -30,6 +34,13 @@ router.get('/estateUser/:id', [validateJWT], ActivateAndInactivate);
 
 router.get('/:id', [validateJWT], getUserById);
 
+=======
+} = require('../controllers/UsersControllers');
+
+const router = Router();
+
+router.get('/', [validateJWT], getUsers);
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 
 router.post(
   '/',
@@ -59,9 +70,12 @@ router.put(
   updateUser,
 );
 
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 router.delete('/:id', [validateJWT], deleteUser);
 
 

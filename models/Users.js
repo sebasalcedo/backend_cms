@@ -23,6 +23,7 @@ const UserSchema = Schema(
       type: String,
       required: true,
     },
+<<<<<<< HEAD
     company:{
       type: String,
       required:false
@@ -65,6 +66,15 @@ const UserSchema = Schema(
       type: String,
       required: true,
       default: 'CONTENIDO',
+=======
+    img: {
+      type: String,
+    },
+    rol: {
+      type: String,
+      required: true,
+      default: 'Content',
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     },
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } },

@@ -2,6 +2,7 @@ const { response } = require('express');
 const bcrypt = require('bcryptjs');
 const Users = require('../models/Users');
 const { generarJWT } = require('../helpers/jwt');
+<<<<<<< HEAD
 const { getStorage, ref, getDownloadURL, uploadBytesResumable } = require('firebase/storage')
 
 const storage = getStorage();
@@ -27,11 +28,17 @@ const getUserById = async(req, res  = response ) => {
 
 
 }
+=======
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 
 const getUsers = async (req, res) => {
  
   const [users, total] = await Promise.all([
+<<<<<<< HEAD
     Users.find({}, 'name last_name phone email isActivated role img'),
+=======
+    Users.find({}, 'name last_name phone email rol img'),
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 
     Users.countDocuments(),
   ]);
@@ -44,7 +51,10 @@ const getUsers = async (req, res) => {
 };
 
 const registerUser = async (req, res = response) => {
+<<<<<<< HEAD
   
+=======
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
   const { email, password } = req.body;
 
   try {
@@ -64,15 +74,23 @@ const registerUser = async (req, res = response) => {
 
     await user.save();
     
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     const token = await generarJWT(user._id);
 
     res.json({
       ok: true,
       data: user,
       token,
+<<<<<<< HEAD
 
     });
 
+=======
+    });
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
   } catch (error) {
     console.log('ERROR al crear el usuario:', error);
 
@@ -90,6 +108,10 @@ const updateUser = async (req, res = response) => {
     const userDB = await Users.findById({ _id });
 
     if (!userDB) {
+<<<<<<< HEAD
+=======
+      console.log('No record found with that id function updateUser');
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 
       return res.status(404).json({
         ok: false,
@@ -98,6 +120,19 @@ const updateUser = async (req, res = response) => {
     }
 
 
+<<<<<<< HEAD
+=======
+       // TODO: Validar token y comprobrar si es el usuario correcto
+
+      //  const requestingUserId = req.user.id;
+      //  if (requestingUserId !== userId) {
+      //    return res.status(401).json({
+      //      ok: false, 
+      //      msg: 'Unauthorized - You are not allowed to update this user',
+      //    });
+      //  }
+
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     const { password, email, ...campos } = req.body;
 
     if (userDB.email !== email) {
@@ -144,6 +179,10 @@ const deleteUser = async (req, res = response) => {
     }
 
     const deleteUser = await Users.findByIdAndDelete(_id);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     return res.status(200).json({
       ok: true,
       msg: 'User Deleted',
@@ -158,6 +197,7 @@ const deleteUser = async (req, res = response) => {
     });
   }
 };
+<<<<<<< HEAD
 const ActivateAndInactivate = async (req, res = response) => {
   const _id = req.params.id;
 
@@ -256,4 +296,12 @@ module.exports = {
   getUserById,
   ActivateAndInactivate,
   uploadFilePerfil
+=======
+
+module.exports = {
+    getUsers,
+  registerUser,
+  updateUser,
+  deleteUser,
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 };

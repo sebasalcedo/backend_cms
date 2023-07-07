@@ -11,10 +11,14 @@ const StepsSchema = Schema(
       type: String,
       required: true,
     },
+<<<<<<< HEAD
     question: {
       type: String,
       required: false
     },
+=======
+
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     description: {
       type: String,
       required: false,

@@ -1,6 +1,10 @@
 const { response } = require('express');
 const Programs = require('../models/programs');
 const Groups = require('../models/Group');
+<<<<<<< HEAD
+=======
+const _ = require('lodash');
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 
 const getProgramById = async (req, res = response) => {
   const idPrograms = req.params.id;
@@ -193,10 +197,13 @@ const deleteProgram = async (req, res = response) => {
       });
     }
 
+<<<<<<< HEAD
 
     // TODO: AL ELIMINAR EL PROGRAMA SE MIGRAN TODO AL QUE SE ENVIA RECORDAR
     // * Se puede mostrar toda la información que se va a mirgrar al nuevo programa.
     
+=======
+>>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     const ProgramsGroup = await Programs.findByIdAndDelete(_id);
 
     return res.status(200).json({
