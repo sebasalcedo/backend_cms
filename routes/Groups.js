@@ -30,11 +30,7 @@ router.post(
   [
     validateJWT,
     check('name', 'name is required').not().isEmpty(),
-<<<<<<< HEAD
     check('idLines', 'line is required').not().isEmpty(),
-=======
-    check('line', 'line is required').not().isEmpty(),
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     check('user', 'user is required').not().isEmpty(),
     validateFields,
   ],
@@ -46,11 +42,7 @@ router.put(
   [
     validateJWT,
     check('name', 'name is required').not().isEmpty(),
-<<<<<<< HEAD
     check('idLines', 'line is required').not().isEmpty(),
-=======
-    check('line', 'line is required').not().isEmpty(),
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     check('user', 'user is required').not().isEmpty(),
     validateFields,
   ],

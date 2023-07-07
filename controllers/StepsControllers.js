@@ -2,15 +2,11 @@ const { response } = require('express');
 
 const Steps = require('../models/Steps');
 const Programs = require('../models/programs');
-<<<<<<< HEAD
 const Media = require('../models/medias');
-=======
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 
 const getStepsByProgram = async (req, res = response) => {
   try {
     const idProgram = req.params.id;
-<<<<<<< HEAD
     const program = await Programs.findById(idProgram, 'Steps').populate('Steps');
     const steps = await Promise.all(program.Steps.map(async (step) => {
 
@@ -27,19 +23,6 @@ const getStepsByProgram = async (req, res = response) => {
     }));
 
     
-=======
-
-    const program = await Programs.findById(idProgram, 'Steps').populate('Steps');
-
-    const steps = program.Steps.map((step) => ({
-      _id: step._id,
-      numberStep: parseInt(step.numberStep),
-      interaction: step.interaction,
-      description: step.description,
-      media: step.media
-    }));
-
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     steps.sort((a, b) => a.numberStep - b.numberStep);
 
     return res.status(200).json({
@@ -54,18 +37,12 @@ const getStepsByProgram = async (req, res = response) => {
     });
   }
 };
-<<<<<<< HEAD
 
 
 
 const getListSteps = async (req, res = response) => {
   const [steps, total] = await Promise.all([
     await Steps.find({}, 'numberStep  Interaction question Description Media'),
-=======
-const getListSteps = async (req, res = response) => {
-  const [steps, total] = await Promise.all([
-    await Steps.find({}, 'numberStep Interaction Description Media'),
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     Steps.countDocuments(),
   ]);
   res.json({
@@ -78,7 +55,6 @@ const getListSteps = async (req, res = response) => {
 const registerSteps = async (req, res = response) => {
   try {
     const { idProgram, steps } = req.body;
-<<<<<<< HEAD
 
     const successIds = [];
     const failureSteps = [];
@@ -110,28 +86,10 @@ const registerSteps = async (req, res = response) => {
           failureSteps.push({ ...jsonData, error: errorMessage });
         } else {
          
-=======
- 
-    // Crear una promesa para registrar los pasos
-    const registrarPasos = new Promise(async (resolve, reject) => {
-      const successIds = [];
-      const failureSteps = [];
-
-      for (const element of steps) {
-        const jsonData = {
-          numberStep: element.numberStep,
-          interaction: element.interaction,
-          description: element.description,
-          media: element.media,
-        };
-
-        try {
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
           const newStep = new Steps(jsonData);
           await newStep.save();
           successIds.push(newStep._id);
 
-<<<<<<< HEAD
          
           const programa = await Programs.findById(idProgram);
           programa.Steps.push(newStep._id);
@@ -150,42 +108,13 @@ const registerSteps = async (req, res = response) => {
     }
 
     // Devolver los resultados de la validación exitosa
-=======
-          // Buscar el programa correspondiente y agregar el ID del paso al arreglo
-          const programa = await Programs.findById(idProgram);
-
-          programa.Steps.push( newStep._id );
-          await programa.save();
-        } catch (error) {
-          console.log(error);
-          failureSteps.push(jsonData);
-        }
-      }
-
-      if (failureSteps.length > 0) {
-        reject({ successIds, failureSteps });
-      } else {
-        resolve({ successIds });
-      }
-    });
-
-    // Ejecutar la promesa para registrar los pasos
-    const { successIds, failureSteps } = await registrarPasos;
-
-    // Devolver los resultados de la promesa
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     return res.status(200).json({
       ok: true,
       successIds,
       failureSteps,
     });
-<<<<<<< HEAD
   } catch (error) {
     // Error general
-=======
-
-  } catch (error) {
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     console.log(error);
     return res.status(400).json({
       ok: false,
@@ -196,18 +125,12 @@ const registerSteps = async (req, res = response) => {
 
 const updateSteps = async (req, res = response) => {
   try {
-<<<<<<< HEAD
     const { ...campos } = req.body;
     const _id = req.params.id;
 
     const stepDB = await Steps.findById({ _id });
     const existingStep = await Steps.findOne({ numberStep: campos.numberStep });
 
-=======
-    const _id = req.params.id;
-
-    const stepDB = await Steps.findById({ _id });
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 
     if (!stepDB) {
       return res.status(404).json({
@@ -215,7 +138,6 @@ const updateSteps = async (req, res = response) => {
         msg: 'No se encontro dato con el id enviado',
       });
     }
-<<<<<<< HEAD
 
     if (!existingStep) {
       return res.status(404).json({
@@ -227,20 +149,12 @@ const updateSteps = async (req, res = response) => {
     
 
 
-=======
-    const { ...campos } = req.body;
-
-    console.log(req.body);
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     const stepsUpdate = await Steps.findByIdAndUpdate(_id, campos);
 
     return res.status(200).json({
       ok: true,
       msg: 'Operación realizada con exito',
-<<<<<<< HEAD
       stepsUpdate
-=======
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     });
   } catch (error) {
     console.log('error en update lineas ', error);
@@ -270,10 +184,7 @@ const deleteStep = async ( req, res = response) =>{
     return res.status(200).json({
         ok: true,
         msg: 'Se ha realizado la operacion exitosamente',
-<<<<<<< HEAD
         deleteStep
-=======
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
      
       });
     } catch (error) {
@@ -286,7 +197,6 @@ const deleteStep = async ( req, res = response) =>{
     }
 }
 
-<<<<<<< HEAD
 
 const updatePositionSteps = async (req, res = response) => {
   const campos = req.body;
@@ -318,17 +228,11 @@ const updatePositionSteps = async (req, res = response) => {
 
 
 
-=======
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 module.exports = {
     getStepsByProgram,
     getListSteps,
     registerSteps,
     updateSteps,
-<<<<<<< HEAD
     deleteStep,
     updatePositionSteps
-=======
-    deleteStep
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 }

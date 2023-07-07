@@ -4,28 +4,18 @@
   "description": "api cms",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
     "start:dev": "nodemon index.js",
     "start": "node index.js"
-=======
-    "start:dev": "nodemon index.js"
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
   },
   "author": "Sebastian Salcedo",
   "license": "ISC",
   "dependencies": {
-<<<<<<< HEAD
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
-=======
-    "@firebase/analytics": "^0.10.0",
-    "bcryptjs": "^2.4.3",
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
-<<<<<<< HEAD
     "express-session": "^1.17.3",
     "express-validator": "^6.15.0",
     "firebase": "^10.0.0",
@@ -38,25 +28,5 @@
   },
   "devDependencies": {
     "nodemon": "^1.14.9"
-=======
-    "express-validator": "^6.15.0",
-    "firebase": "^9.22.0",
-    "firebase-admin": "^11.8.0",
-    "jsonwebtoken": "^9.0.0",
-    "lodash": "^4.17.21",
-    "mongoose": "^7.0.3",
-    "morgan": "^1.10.0",
-    "uuid": "^9.0.0"
-  },
-  "devDependencies": {
-    "eslint": "^8.38.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-node": "^4.1.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "nodemon": "^2.0.22",
-    "prettier": "^2.8.7"
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
   }
 }

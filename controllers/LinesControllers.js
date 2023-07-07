@@ -2,12 +2,6 @@ const { response } = require('express');
 
 const Lines = require('../models/Lines');
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 const getLineById = async (req, res = response) => {
   const idLine = req.params.id;
 
@@ -30,19 +24,11 @@ const getLineById = async (req, res = response) => {
 };
 
 const getLines = async (req, res = response) => {
-<<<<<<< HEAD
   
 
   const [lines, total] = await Promise.all([
     Lines.find({}, 'name indicative description created_at updated_at')
     .sort({ created_at: 1 }),,
-=======
-  const desde = Number(req.query.desde) || 0;
-
-  const [lines, total] = await Promise.all([
-    Lines.find({}, 'name indicative description created_at updated_at')
-      .skip(desde),
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     Lines.countDocuments(),
   ]);
 

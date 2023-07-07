@@ -9,7 +9,6 @@ const login = async (req, res = response) => {
 
   try {
     const userDB = await Users.findOne({ email });
-<<<<<<< HEAD
 
     
 
@@ -23,10 +22,6 @@ const login = async (req, res = response) => {
     }
 
 
-=======
-    const id = userDB._id.toString();
-
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     if (!id) {
       return res.status(404).json({
         ok: false,
@@ -67,10 +62,6 @@ const login = async (req, res = response) => {
 
 const renewToken = async (req, res = response) => {
   const _id = req._id;
-<<<<<<< HEAD
-=======
-  console.log("id que llega en la req", _id);
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
   const token = await generarJWT(_id );
   const { id, name, last_name, email, rol, img } = await Users.findById({ _id });
   res.json({
@@ -85,7 +76,6 @@ const renewToken = async (req, res = response) => {
     token
   });
 };
-<<<<<<< HEAD
 
 
 
@@ -135,9 +125,4 @@ module.exports = {
   login,
   renewToken,
   updatedPassword
-=======
-module.exports = {
-  login,
-  renewToken,
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
 };

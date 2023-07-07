@@ -11,7 +11,6 @@ const LinesSchema = Schema(
       type: String,
       required: false,
     },
-<<<<<<< HEAD
     groups:[
       {
         required: false,
@@ -20,8 +19,6 @@ const LinesSchema = Schema(
       }
     ],
     
-=======
->>>>>>> 494b816e14407c4871632ccf81f4e019a201c871
     description: {
       type: String,
       required: false,
