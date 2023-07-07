@@ -4,6 +4,10 @@ const helmet = require('helmet');
 const express = require('express');
 const session = require('express-session');
 
+
+const  initializeFirebase = require ("./firebase/configurations");
+
+
 const { dbConnection } = require('./database/Connection');
 require('dotenv').config();
 
@@ -23,6 +27,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Lectura y parseo del body
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Inicio de firebase Storage
+
+initializeFirebase();
 
 // Configuración del middleware express-session
 app.use(

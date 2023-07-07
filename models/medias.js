@@ -13,6 +13,10 @@ const mediaSchema = Schema(
     fileUrl: {
       type: String,
       required: false
+    },
+    downloadURL:{
+      type: String,
+      required: false
     }
   },
   { timestamps: true, collection: 'media' }

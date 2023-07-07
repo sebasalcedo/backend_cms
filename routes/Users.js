@@ -7,6 +7,7 @@ const { check } = require('express-validator');
 
 const { validateFields } = require('../middlewares/validateFields');
 const { validateJWT } = require('../middlewares/validateToken');
+const multer = require('multer');
 
 const {
   registerUser,
@@ -14,10 +15,15 @@ const {
   deleteUser,
   getUsers,
   getUserById,
-  ActivateAndInactivate
+  ActivateAndInactivate,
+  uploadFilePerfil
 } = require('../controllers/UsersControllers');
 
 const router = Router();
+const upload = multer({ storage: multer.memoryStorage() });
+
+router.post('/uploadPerfil',  upload.single('file'), uploadFilePerfil);
+
 
 router.get('/', [validateJWT], getUsers);
 router.get('/estateUser/:id', [validateJWT], ActivateAndInactivate);
@@ -52,6 +58,9 @@ router.put(
   ],
   updateUser,
 );
+
+
+
 
 router.delete('/:id', [validateJWT], deleteUser);
 

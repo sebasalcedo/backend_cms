@@ -2,8 +2,9 @@ const { response } = require('express');
 const bcrypt = require('bcryptjs');
 const Users = require('../models/Users');
 const { generarJWT } = require('../helpers/jwt');
+const { getStorage, ref, getDownloadURL, uploadBytesResumable } = require('firebase/storage')
 
-
+const storage = getStorage();
 const getUserById = async(req, res  = response ) => {
 
   const idUser = req.params.id;
@@ -188,11 +189,71 @@ const ActivateAndInactivate = async (req, res = response) => {
   }
 };
 
+
+const giveCurrentDateTime = () => {
+  const today = new Date();
+  const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+  const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  const dateTime = date + ' ' + time;
+  return dateTime;
+}
+
+const uploadFilePerfil = async (req, res = response) =>{
+  
+  try {
+
+    const _id = req.params.id;
+    const userDB = await Users.findById({ _id });
+
+    if (!userDB) {
+
+      return res.status(404).json({
+        ok: false,
+        msg: 'No record found with that id',
+      });
+    }
+    console.log(req.file.originalname);
+
+    const dateTime = giveCurrentDateTime();
+
+    const storageRef = ref(storage, `perfil/${req.file.originalname + "       " + dateTime}`);
+
+    // Create file metadata including the content type
+    const metadata = {
+        contentType: req.file.mimetype,
+    };
+
+    // Upload the file in the bucket storage
+    const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, metadata);
+    //by using uploadBytesResumable we can control the progress of uploading like pause, resume, cancel
+
+    // Grab the public url
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+
+    userDB.img = downloadURL;
+
+    await userDB.save()
+      .then(savedMedia => {
+        console.log('Archivo guardado en la base de datos:', savedMedia);
+        res.json(savedMedia); 
+      })
+      .catch(error => {
+        console.log('Error al guardar el archivo en la base de datos:', error);
+        res.status(500).json({ error: 'Error al guardar el archivo' });
+      });
+
+} catch (error) {
+    return res.status(400).send(error.message)
+}
+}
+
 module.exports = {
   getUsers,
   registerUser,
   updateUser,
   deleteUser,
   getUserById,
-  ActivateAndInactivate
+  ActivateAndInactivate,
+  uploadFilePerfil
 };

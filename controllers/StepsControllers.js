@@ -12,11 +12,7 @@ const getStepsByProgram = async (req, res = response) => {
 
   
       const media = await Media.findById(step.media);
-
-
-
-
-      return {
+     return {
         _id: step._id,
         numberStep: parseInt(step.numberStep),
         interaction: step.interaction,
@@ -26,7 +22,7 @@ const getStepsByProgram = async (req, res = response) => {
       };
     }));
 
-    console.log('steps',steps);
+    
     steps.sort((a, b) => a.numberStep - b.numberStep);
 
     return res.status(200).json({
@@ -69,7 +65,7 @@ const registerSteps = async (req, res = response) => {
         question: element.question,
         interaction: element.interaction,
         description: element.description,
-        media: element.media,
+        media: element.media || null,
       };
 
       try {

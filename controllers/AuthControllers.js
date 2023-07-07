@@ -62,7 +62,6 @@ const login = async (req, res = response) => {
 
 const renewToken = async (req, res = response) => {
   const _id = req._id;
-  console.log("id que llega en la req", _id);
   const token = await generarJWT(_id );
   const { id, name, last_name, email, rol, img } = await Users.findById({ _id });
   res.json({
@@ -77,7 +76,53 @@ const renewToken = async (req, res = response) => {
     token
   });
 };
+
+
+
+const updatedPassword = async (req, res = response) => {
+  const idUser = req.body.id;
+  console.log(idUser);
+  const { lastPassword, newPassword } = req.body;
+
+  try {
+    const userDB = await Users.findById(idUser);
+
+    if (!userDB) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'No record found with that id',
+      });
+    }
+
+    const validPassword = bcrypt.compareSync(lastPassword, userDB.password);
+
+    if (!validPassword) {
+      return res.status(400).json({
+        ok: false,
+        msg: 'Incorrect password',
+      });
+    }
+
+    const salt = bcrypt.genSaltSync();
+    userDB.password = bcrypt.hashSync(newPassword, salt);
+    await userDB.save();
+
+    return res.status(200).json({
+      ok: true,
+      msg: 'Password changed successfully',
+    });
+  } catch (error) {
+    // Manejar errores
+    console.error(error);
+    return res.status(500).json({
+      ok: false,
+      msg: 'Internal server error',
+    });
+  }
+};
+
 module.exports = {
   login,
   renewToken,
+  updatedPassword
 };
