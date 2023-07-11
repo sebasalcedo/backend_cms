@@ -61,8 +61,8 @@ const uploadMedia = async (req, res = response) => {
 
    }else{
    
-
-    const storageRef = ref(storage, `files/${req.file.originalname + "       " + dateTime}`);
+    console.log(req.body.carpeta);
+    const storageRef = ref(storage, `files/${req.body.carpeta + "       " + dateTime}`);
 
     // Create file metadata including the content type
     const metadata = {
@@ -77,7 +77,7 @@ const uploadMedia = async (req, res = response) => {
     const downloadURL = await getDownloadURL(snapshot.ref);
 
     const media = new Media({
-      name: req.file.originalname,
+      name: req.body.carpeta,
       type: req.file.mimetype,
       downloadURL: downloadURL
     });
@@ -107,19 +107,17 @@ const uploadMedia = async (req, res = response) => {
 const guardarLink = function (req, res = response) {
 
   const { name, fileUrl } = req.body;
-  const fechaActual = obtenerFechaActual();
   
-  const nombreArchivo = `archivo-${fechaActual}-${name}`;
 
   
 
-  Media.findOne({ name: nombreArchivo })
+  Media.findOne({ name: name })
     .then(existingMedia => {
       if (existingMedia) {
         return res.status(400).json({ error: 'Ya existe un archivo con el mismo nombre' });
       }
       const media = new Media({
-        name: nombreArchivo,
+        name: name,
         type: 'video',
         fileUrl: fileUrl
       });
